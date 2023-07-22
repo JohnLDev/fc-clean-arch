@@ -22,7 +22,13 @@ describe('Unit Test list product use case', () => {
 
     expect(result).toHaveLength(3);
     expect(result).toBeInstanceOf(Array);
-    expect(result).toEqual([product, product, product]);
+    expect(result).toEqual(
+      [product, product, product].map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+      }))
+    );
   });
 
   it('should not list products', async () => {

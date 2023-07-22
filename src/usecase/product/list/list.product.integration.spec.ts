@@ -35,7 +35,11 @@ describe('Test find product use case', () => {
 
     const input = {};
 
-    const output = [product, product2];
+    const output = [product, product2].map((p) => ({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+    }));
 
     const result = await usecase.execute(input);
 

@@ -11,6 +11,10 @@ export default class ListProductUseCase {
   async execute(_: InputListProductDto): Promise<OutputListProductDto> {
     const products = await this.productRepository.findAll();
 
-    return products;
+    return products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+    }));
   }
 }
