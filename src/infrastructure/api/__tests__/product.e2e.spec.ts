@@ -1,5 +1,3 @@
-import Product from '../../../domain/product/entity/product';
-import ProductRepository from '../../product/repository/sequelize/product.repository';
 import { app, sequelize } from '../express';
 import request from 'supertest';
 
@@ -13,12 +11,17 @@ describe('E2E test for product', () => {
   });
 
   it('should list all product', async () => {
-    const product1 = new Product('1', 'Product 1', 10);
-    const product2 = new Product('2', 'Product 2', 20);
+    const response1 = await request(app).post('/product').send({
+      name: 'Product 1',
+      price: 10,
+    });
+    expect(response1.status).toBe(200);
+    const response2 = await request(app).post('/product').send({
+      name: 'Product 2',
+      price: 20,
+    });
 
-    const productRepository = new ProductRepository();
-    await productRepository.create(product1);
-    await productRepository.create(product2);
+    expect(response2.status).toBe(200);
 
     const listResponse = await request(app).get('/product').send();
 
@@ -32,5 +35,24 @@ describe('E2E test for product', () => {
     const secondProduct = listResponse.body[1];
     expect(secondProduct.name).toBe('Product 2');
     expect(secondProduct.price).toBe(20);
+  });
+
+  it('should not create a product', async () => {
+    const response = await request(app).post('/product').send({
+      name: 'Product 1',
+    });
+    expect(response.status).toBe(500);
+  });
+
+  it('should create a product', async () => {
+    const response = await request(app).post('/product').send({
+      name: 'Product 1',
+      price: 10,
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe('Product 1');
+    expect(response.body.id).toBeDefined();
+    expect(response.body.price).toBe(10);
   });
 });
